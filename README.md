@@ -1,43 +1,42 @@
 <img width="1280" alt="readme-banner" src="https://github.com/user-attachments/assets/35332e92-44cb-425b-9dff-27bcf1023c6c">
 
-# [Project Name] 🎯
+# SlothType 🎯
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name:[_Dumple_Dumple]
 
 
 ### Team Members
-- Team Lead: [Name] - [College]
-- Member 2: [Name] - [College]
-- Member 3: [Name] - [College]
+- Team Lead: Dev Anand B - College of Engineering Trivandrum
+- Member 2: Anandaram R - College of Engineering Trivandrum
+- Member 3: Aarya Nanda Sajan - College of Engineering Trivandrum
 
 ### Project Description
-[2-3 lines about what your project does]
+
+This project is a typing simulator that essentially lets you... type. It doesn't improve your typing skills, doesn't track your progress, and certainly won’t make you faster. It's just here to let you type some random text and see letters pop up—an absolutely pointless exercise in pressing keys!. You can only click one letter in one second therefore it creates a frustrating typing environment.
 
 ### The Problem (that doesn't exist)
-[What ridiculous problem are you solving?]
+We're tackling the monumental problem of... boredom! Ever felt like typing meaningless text just for the sake of watching letters appear on the screen? Well, now you can! It’s the ultimate solution for people who have absolutely nothing better to do. 🎉
 
 ### The Solution (that nobody asked for)
-[How are you solving it? Keep it fun!]
+We’re solving it by giving you a digital sandbox where typing becomes an event! With every keystroke, letters slide across the screen, your on-screen keyboard lights up, and you get to experience the thrill of... hitting the spacebar! It's like a party for your fingers, minus any actual productivity. 🎈
 
 ## Technical Details
 ### Technologies/Components Used
 For Software:
-- [Languages used]
-- [Frameworks used]
-- [Libraries used]
-- [Tools used]
-
-For Hardware:
-- [List main components]
-- [List specifications]
-- [List tools required]
+For Software:
+- Languages used: JavaScript, HTML, CSS
+- Frameworks used: React
+- Libraries used: React Router
+- Tools used: Node.js, npm, version control with Git
 
 ### Implementation
 For Software:
 # Installation
-[commands]
+git clone https://github.com/Dev-codeme/slothtype.git
+npm install
+npm start
 
 # Run
 [commands]
@@ -87,9 +86,9 @@ For Hardware:
 [Add any extra demo materials/links]
 
 ## Team Contributions
-- [Name 1]: [Specific contributions]
-- [Name 2]: [Specific contributions]
-- [Name 3]: [Specific contributions]
+- Dev Anand B: Developed the home page.
+- Anandaram R: User authentication.
+- Aarya Nanda Sajan : Developed the Login and SignUp pages.
 
 ---
 Made with ❤️ at TinkerHub Useless Projects 
