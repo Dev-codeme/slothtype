@@ -4,7 +4,7 @@
 
 
 ## Basic Details
-### Team Name:[_Dumple_Dumple]
+### Team Name:_Dumple_Dumple
 
 
 ### Team Members
