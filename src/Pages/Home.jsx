@@ -1,31 +1,44 @@
 import { useState, useEffect } from 'react';
 import { client } from '../../client';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
 export default function Home() {
-
     const [userInput, setUserInput] = useState("");
     const [highlightedKeys, setHighlightedKeys] = useState({});
     const [lastKeyTime, setLastKeyTime] = useState(0);
-    const [ session, setSession ] = useState(client.auth.getUser())
-    const [ logoutLoading, setLogoutLoading ] = useState(false)
+    const [session, setSession] = useState(client.auth.getUser ());
+    const [logoutLoading, setLogoutLoading] = useState(false);
+
+    const targetText = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic, voluptatum labore? Distinctio, qui praesentium sint eos repellat recusandae accusamus sunt exercitationem blanditiis perspiciatis! Esse facilis sequi sint necessitatibus nostrum perspiciatis.";
+    
+    const finishedText = targetText.slice(0, userInput.length);
+    const unfinishedText = targetText.slice(userInput.length);
 
     // Handle keyboard input
     useEffect(() => {
         const handleKeyPress = (e) => {
+            const key = e.key.toLowerCase();
             if (e.key.length === 1) {
-                addCharacter(e.key);
+                if (userInput.length < targetText.length && targetText[userInput.length] === e.key) {
+                    addCharacter(e.key);
+                } else {
+                    resetInput();
+                }
             } else if (e.key === "Backspace") {
                 deleteCharacter();
             } else if (e.key === " ") {
-                addCharacter(" ");
-                setHighlightedKeys((prev) => ({ ...prev, " ": true }));
+                if (userInput.length < targetText.length && targetText[userInput.length] === " ") {
+                    addCharacter(" ");
+                } else {
+                    resetInput();
+                }
             }
-            setHighlightedKeys((prev) => ({ ...prev, [e.key.toLowerCase()]: true }));
+            setHighlightedKeys((prev) => ({ ...prev, [key]: true }));
         };
 
         const handleKeyRelease = (e) => {
-            setHighlightedKeys((prev) => ({ ...prev, [e.key.toLowerCase()]: false }));
+            const key = e.key.toLowerCase();
+            setHighlightedKeys((prev) => ({ ...prev, [key]: false }));
         };
 
         window.addEventListener("keydown", handleKeyPress);
@@ -33,36 +46,38 @@ export default function Home() {
 
         client.auth.getSession()
         .then(({ data }) => {
-            setSession(data)
-        })
+            setSession(data);
+        });
 
         const { data: authListener } = client.auth.onAuthStateChange((_evt, session) => {
-            setSession(session)
-        })
+            setSession(session);
+        });
 
         return () => {
             window.removeEventListener("keydown", handleKeyPress);
             window.removeEventListener("keyup", handleKeyRelease);
-            authListener.subscription.unsubscribe()
+            authListener.subscription.unsubscribe();
         };
-    }, []);
+    }, [userInput]);
 
     // Add character with a typing limit of one per second
     const addCharacter = (char) => {
         const currentTime = Date.now();
         const timeSinceLastKey = currentTime - lastKeyTime;
-        console.log(timeSinceLastKey)
+
         if (timeSinceLastKey < 1000) {
-            // Typing too fast, clear user input and reset lastKeyTime
-            setUserInput(""); // Clear user input
-            setLastKeyTime(currentTime); // Reset time to current time to prevent further fast resets
+            resetInput();
         } else {
-            // If enough time has passed, add the character to user input
             setUserInput((prevInput) => prevInput + char);
-            setLastKeyTime(currentTime); // Update lastKeyTime to current time
+            setLastKeyTime(currentTime);
         }
     };
-    
+
+    // Reset input
+    const resetInput = () => {
+        setUserInput("");
+        setLastKeyTime(Date.now());
+    };
 
     // Delete character
     const deleteCharacter = () => {
@@ -70,32 +85,34 @@ export default function Home() {
     };
 
     const logout = () => {
-        setLogoutLoading(true)
+        setLogoutLoading(true);
         client.auth.signOut()
         .then(() => {
-            setLogoutLoading(false)
-        })
-    }
+            setLogoutLoading(false);
+        });
+    };
 
     return (
-        <div>
+        <div className="overflow-hidden h-screen"> {/* Prevent scrolling */}
             <div className='flex p-5 justify-between'>
                 <h1 className="text-3xl font-poppins text-secondary select-none opacity-60">slothtype</h1>
-                {session ?
-                <button disabled={logoutLoading} onClick={logout} className='border-2 rounded-md mx-1 px-3 py-1 border-primary text-primary hover:bg-rose-4s0an0 hover:border-rose-400 hover:text-black duration-150 disabled:border-gray-400 disabled:text-gray-400 disabled:bg-transparent'>Logout</button>
-                    :
-                <div className='flex items-center opacity-80'>
-                    <Link to='/login' className='border-2 rounded-md mx-1 px-3 py-1 border-primary text-primary hover:bg-primary hover:text-black duration-150'>Login</Link>
-                    <Link to='/signup' className='border-2 rounded-md mx-1 px-3 py-1 border-primary text-primary hover:bg-primary hover:text-black duration-150'>Signup</Link>
-                </div>
-                }
+                {session ? (
+                    <button disabled={logoutLoading} onClick={logout} className='border-2 rounded-md mx-1 px-3 py-1 border-primary text-primary hover:bg-rose-400 hover:border-rose-400 hover:text-black duration-150 disabled:border-gray-400 disabled:text-gray-400 disabled:bg-transparent'>Logout</button>
+                ) : (
+                    <div className='flex items-center opacity-80'>
+                        <Link to='/login' className='border-2 rounded-md mx-1 px-3 py-1 border-primary text-primary hover:bg-primary hover:text-black duration-150'>Login</Link>
+                        <Link to='/signup' className='border-2 rounded-md mx-1 px-3 py-1 border-primary text-primary hover:bg-primary hover:text-black duration-150'>Signup</Link>
+                    </div>
+                )}
             </div>
             <div className="flex flex-col items-center justify-around h-screen text-center overflow-x-hidden">
                 <div>
                     <p className='flex gap-0 p-4'>
-                        <pre id='finished' className={`text-5xl text-opacity-60 text-primary relative left-[45%] min-w-fit mx-auto h-10 flex items-center justify-center select-none`}>Lorem </pre>
-                        <pre id='unfinished' className={`text-5xl text-primary relative left-[45%] min-w-fit mx-auto h-10 flex items-center justify-center select-none`}>
-                            ipsum dolor sit amet consectetur adipisicing elit. Hic, voluptatum labore? Distinctio, qui praesentium sint eos repellat recusandae accusamus sunt exercitationem blanditiis perspiciatis! Esse facilis sequi sint necessitatibus nostrum perspiciatis.
+                        <pre id='finished' className="text-5xl text-opacity-60 text-primary relative left-[45%] min-w-fit mx-auto h-10 flex items-center justify-center select-none">
+                            {finishedText}
+                        </pre>
+                        <pre id='unfinished' className="text-5xl text-primary relative left-[45%] min-w-fit mx-auto h-10 flex items-center justify-center select-none">
+                            {unfinishedText}
                         </pre>
                     </p>
                 </div>
@@ -125,7 +142,9 @@ function OnScreenKeyboard({ addCharacter, deleteCharacter, highlightedKeys }) {
                         <button
                             key={key}
                             onClick={() => addCharacter(key)}
-                            className={`key-button px-4 py-2 rounded border-2 border-secondary text-secondary hover:bg-secondary hover:text-black`}
+                            className={`key-button px-4 py-2 rounded border-2 border-secondary text-secondary hover:bg-secondary hover:text-black ${
+                                highlightedKeys[key] ? "bg-secondary text-black" : ""
+                            }`}
                         >
                             {key.toUpperCase()}
                         </button>
@@ -135,13 +154,17 @@ function OnScreenKeyboard({ addCharacter, deleteCharacter, highlightedKeys }) {
             <div className="space-x-2 mt-2">
                 <button
                     onClick={() => addCharacter(" ")}
-                    className="key-button px-16 py-2 rounded border-2 border-secondary text-secondary hover:bg-secondary hover:text-black"
+                    className={`key-button px-16 py-2 rounded border-2 border-secondary text-secondary hover:bg-secondary hover:text-black ${
+                        highlightedKeys[" "] ? "bg-secondary text-black" : ""
+                    }`}
                 >
                     Space
                 </button>
                 <button
                     onClick={deleteCharacter}
-                    className="key-button px-4 py-2 rounded border-2 border-secondary text-secondary hover:bg-secondary hover:text-black"
+                    className={`key-button px-4 py-2 rounded border-2 border-secondary text-secondary hover:bg-secondary hover:text-black ${
+                        highlightedKeys["backspace"] ? "bg-secondary text-black" : ""
+                    }`}
                 >
                     Backspace
                 </button>
